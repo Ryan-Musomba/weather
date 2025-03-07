@@ -1,0 +1,66 @@
+body{
+    font-family: Arial, sans-serif;
+    background-color: hsl(0, 0%, 95%);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.form{
+    margin: 20px;
+    display: flex;
+    }
+.countrySelect {
+    border-radius: 10px;
+  margin-right: 10px;
+ 
+}    
+.citySelect{
+    border-radius: 10px;
+    margin-right: 10px;
+}
+.cityinput{
+    padding: 10px;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+.form button{
+   border-radius: 5px;
+   font-size: 1.0rem;
+   background:  hsl(210,100%,75%);
+   cursor:pointer;
+   font-weight: bold;
+}
+.form button:hover{
+    background-color: rgba(6, 60, 140, 0.72);
+}
+.card{
+    background: linear-gradient(180deg, hsl(210,100%,75%), hsl(40,100%,75%));
+    padding: 10%;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px black;
+    font-size: larger;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+h2{
+    font-weight: bold;
+}
+.humidityDisplay{
+    font-weight: bold;
+}
+.tempDisplay{
+    font-weight: bold;
+}
+.descDisplay{
+    font-weight: bold;
+}
+.weatherEmoji{
+    font-size: xx-large;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+.errorDisplay{
+    font-weight: bold;
+}
