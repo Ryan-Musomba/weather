@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Event Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #EAF3F8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            background-color: #4682B4;
+            color: white;
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            margin: 0 0 20px;
+        }
+        h2 {
+            color: #4682B4;
+        }
+        form {
+            background-color: #FFFFFF;
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 10px 0;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        label,
+        input,
+        button {
+            display: block;
+            width: 95%;
+            margin-bottom: 10px;
+        }
+        input,
+        button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4682B4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4169E1;
+        }
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #4682B4;
+            color: white;
+        }
+        td {
+            background-color: #FFFFFF;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Event Management System</h1>
+    <h2>Events in the Next 7 Days</h2>
+    <div id="next7DaysEvents"></div>
+    <h2>Event Details</h2>
+    <div id="eventDetails"></div>
+    <h2>Add New Event</h2>
+    <form id="addEventForm">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required>
+        <button type="submit">Add Event</button>
+    </form>
+    <h2>Remove Event</h2>
+    <form id="removeEventForm">
+        <label for="removeTitle">Event Title to Remove:</label>
+        <input type="text" id="removeTitle" name="removeTitle" required>
+        <button type="submit">Remove Event</button>
+    </form>
+    <h2>Event with the Most Attendees</h2>
+    <div id="mostAttendeesEvent"></div>
+    <script>
+        let events = [
+            {
+                title: "Wedding",
+                date: new Date("2025-02-28"),
+                location: "Nairobi",
+                attendees: new Set(["Alice", "Bob"])
+            },
+            {
+                title: "Birthday",
+                date: new Date("2025-03-02"),
+                location: "Mombasa",
+                attendees: new Set(["Charlie", "David"])
+            },
+            {
+                title: "Baby shower",
+                date: new Date("2025-03-05"),
+                location: "Kisumu",
+                attendees: new Set(["Eve", "Frank"])
+            }
+        ];
+        function updateNext7DaysEvents() {
+            const next7DaysEvents = events.filter(event => {
+                const today = new Date();
+                const nextWeek = new Date(today);
+                nextWeek.setDate(today.getDate() + 7);
+                return event.date >= today && event.date <= nextWeek;
+            }).map(event => {
+                return `<p>${event.title} on ${event.date.toDateString()} at ${event.location}</p>`;
+            }).join("");
+            document.getElementById("next7DaysEvents").innerHTML = next7DaysEvents;
+        }
+        function updateEventDetailsTable() {
+            const eventDetailsTable = `
+                <table>
+                    <tr>
+                        <th>Title</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th>Attendees</th>
+                    </tr>
+                    ${events.map(({ title, date, location, attendees }) => `
+                        <tr>
+                            <td>${title}</td>
+                            <td>${date.toDateString()}</td>
+                            <td>${location}</td>
+                            <td>${attendees.size}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+            document.getElementById("eventDetails").innerHTML = eventDetailsTable;
+            updateMostAttendeesEvent();
+        }
+        function updateMostAttendeesEvent() {
+            if (events.length === 0) {
+                document.getElementById("mostAttendeesEvent").innerHTML = "<p>No events available.</p>";
+                return;
+            }
+            let maxAttendeesEvent = events.reduce((maxEvent, event) => {
+                return (event.attendees.size > maxEvent.attendees.size) ? event : maxEvent;
+            });
+            document.getElementById("mostAttendeesEvent").innerHTML = `
+                <p>The event with the most attendees is "${maxAttendeesEvent.title}" with ${maxAttendeesEvent.attendees.size} attendees.</p>
+            `;
+        }
+        updateNext7DaysEvents();
+        updateEventDetailsTable();
+        document.getElementById("addEventForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const title = document.getElementById("title").value;
+            const date = new Date(document.getElementById("date").value);
+            const location = document.getElementById("location").value;
+            const attendees = document.getElementById("attendees").value;
+            const newEvent = { title, date, location, attendees: new Set() };
+            events.push(newEvent);
+            updateNext7DaysEvents();
+            updateEventDetailsTable();
+            this.reset();
+        });
+        document.getElementById("removeEventForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const removeTitle = document.getElementById("removeTitle").value;
+            events = events.filter(event => event.title !== removeTitle);
+            updateNext7DaysEvents();
+            updateEventDetailsTable();
+            this.reset();
+        });
+        function addAttendee(eventTitle, attendeeName) {
+            const event = events.find(event => event.title === eventTitle);
+            if (event) {
+                event.attendees.add(attendeeName);
+                console.log(`${attendeeName} added to ${eventTitle}`);
+            } else {
+                console.log(`Event with title "${eventTitle}" not found.`);
+            }
+        }
+        events.forEach(event => {
+            event.toJSON = function () {
+                return {
+                    ...this,
+                    formattedDate: this.date.toLocaleDateString("en-US")
+                };
+            };
+        });
+        const eventsJson = JSON.stringify(events, null, 2);
+        console.log("Events JSON with formattedDate:");
+        console.log(eventsJson);
+        const firstEvent = events[0];
+        const firstEventProperties = `
+            <p>Keys: ${Object.keys(firstEvent).join(', ')}</p>
+            <p>Values: ${Object.values(firstEvent).join(', ')}</p>
+            <p>Entries: ${Object.entries(firstEvent).map(entry => entry.join(': ')).join(', ')}</p>
+        `;
+        document.getElementById("firstEventProperties").innerHTML = firstEventProperties;
+        console.log("Titles and dates of all events:");
+        events.forEach(event => {
+            console.log(`Title: ${event.title}, Date: ${event.date.toDateString()}`);
+        });
+    </script>
+</body>
+</html>
